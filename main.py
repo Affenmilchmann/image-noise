@@ -6,14 +6,14 @@ from my_time import *
 from graphics import Session
 from video_save import SaveVideo
 
-WIDTH, HEIGHT = 200, 200
-out_scale = 1.2
-out_noiseScale = 0.02
+WIDTH, HEIGHT = 800, 800
+out_scale = 0.4
+out_noiseScale = 0.007
 out_step = 0.5
 out_depth = 150
 out_distance = 200
 out_out_frames = 300
-out_octaves = 10
+out_octaves = 3
 
 
 def startSession():
@@ -34,8 +34,8 @@ def startSession():
 	while session.isGoing:
 		timer = time()
 
-		session.Events()
 		session.ThreadDraw(1)
+		session.Events()
 
 		time_spent += time() - timer
 

@@ -7,7 +7,7 @@ from my_math import RayCastingPoint
 import pygame
 
 pygame.init()
-naadia_image = pygame.image.load('naadia.jpg')
+naadia_image = pygame.image.load('dt2.jpg')
 
 def GetNoise(x, y, z, scale, w, h, d, oc):
 	return pnoise3(x * scale, 
@@ -23,7 +23,7 @@ def GetNoise(x, y, z, scale, w, h, d, oc):
 
 class Session:
 	def __init__(self, width, height, scale = 1.0, noiseScale = 0.02, depth = 10000, step = 0.5, octaves = 1, distance = 100, out_frames = 0):
-		self.screen = pygame.display.set_mode((int(width * scale * 2) + 50, int(height * scale * 2) + 50))
+		self.screen = pygame.display.set_mode((max(int(width * scale * 2), width), int(height * scale + height)))
 		self.isGoing = True
 		
 		self.WIDTH = width
@@ -58,25 +58,31 @@ class Session:
 	def ThreadDraw(self, thrAmount):
 		self.screen.fill((10, 0, 50))
 
-		thrs = []
-		for i in range(thrAmount):
-			thrs.append(Thread(target=self.Draw, args=(self.z, self.WIDTH * int(i / thrAmount), self.WIDTH * int((i + 1) / thrAmount))))
+		#thrs = []
+		#for i in range(thrAmount):
+		#	thrs.append(Thread(target=self.Draw, args=(self.z, int(self.SCALE * self.WIDTH * i / thrAmount), int(self.SCALE * self.WIDTH * (i + 1) / thrAmount))))
 
-		for i in range(thrAmount):
-			thrs[i].start()
-			thrs[i].join()
-
+		#for i in range(thrAmount):
+		#	thrs[i].start()
+		#	thrs[i].join()
+		
+		self.Draw(self.z, int(self.WIDTH * self.SCALE), int(self.HEIGHT * self.SCALE))
+			
 		pygame.display.flip()
 		
 		self.DisplayInfo()
 		
 		self.z = ((self.z + self.STEP) <= self.DEPTH) * (self.z + self.STEP)
 
-	def Draw(self, z, W_begin, W_end):
+	def Draw(self, z, W, H):
 		self.screen.blit(naadia_image, ((0, int(self.HEIGHT * self.SCALE)),(self.WIDTH, self.HEIGHT)))
 
-		for x in range(W_begin, W_end):
-			for y in range(self.HEIGHT):
+		for i_x in range(W):
+			for i_y in range(H):
+				#rescaling currend curved image point to the actual image size
+				x = round(i_x / self.SCALE)
+				y = round(i_y / self.SCALE)
+				
 				value = GetNoise(x, y, z, self.NOISE_SCALE, self.WIDTH, self.HEIGHT, self.DEPTH, self.OCTAVES)
 
 				normalised_height = float(float(value + 1) / 2.0)
@@ -93,22 +99,22 @@ class Session:
 				#	DRAWING CURVED IMAGE
 				image_point = RayCastingPoint(poly, coords, screen_height = self.DIST)
 
-				if (image_point[0] < 0 or image_point[1] < 0 or image_point[0] >= int(self.WIDTH * self.SCALE) or image_point[1] >= int(self.HEIGHT * self.SCALE)):
+				if (image_point[0] < 0 or image_point[1] < 0 or image_point[0] >= int(self.WIDTH) or image_point[1] >= int(self.HEIGHT)):
 					pygame.draw.rect(
 						self.screen,
 						(0, 0, 0),
 						(
-							(x, y),
+							(x * self.SCALE, y * self.SCALE),
 							(ceil(self.SCALE), ceil(self.SCALE))
 						)
 					)
-				else:
+				else:					
 					pygame.draw.rect(
 						self.screen,
 						self.screen.get_at((image_point[0], image_point[1] + int(self.HEIGHT * self.SCALE))),
 						(
-							(ceil(x * self.SCALE), ceil(y * self.SCALE)),
-							(ceil(self.SCALE), ceil(self.SCALE))
+							(round(x * self.SCALE), round(y * self.SCALE)),
+							(round(self.SCALE), round(self.SCALE))
 						)
 					)
 
