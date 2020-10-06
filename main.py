@@ -6,14 +6,16 @@ from my_time import *
 from graphics import Session
 from video_save import SaveVideo
 
-WIDTH, HEIGHT = 800, 800
-out_scale = 0.4
+WIDTH, HEIGHT = 200, 200
+out_scale = 1
 out_noiseScale = 0.007
 out_step = 0.5
 out_depth = 150
 out_distance = 200
 out_out_frames = 300
 out_octaves = 3
+out_image_path = "naadia.jpg"
+out_video_path = "result" # + ".avi"
 
 
 def startSession():
@@ -26,7 +28,8 @@ def startSession():
 					  step = out_step, 
 					  distance = out_distance, 
 					  octaves = out_octaves,
-					  out_frames = out_out_frames)
+					  out_frames = out_out_frames,
+					  image_path = out_image_path)
 
 	z = 0
 	time_spent = 0
@@ -54,11 +57,14 @@ def Settings():
 	print("**settings**")
 	print("************")
 	print("noiseScale: ", out_noiseScale)
+	print("scale: ", out_scale)
 	print("step: ", out_step)
 	print("depth: ", out_depth)
 	print("distance: ", out_distance)
 	print("octaves: ", out_octaves)
 	print("out_frames: ", out_out_frames)
+	print("input_file: ", out_image_path)
+	print("out_video_file: ", out_video_path + ".avi")
 	print("************")
 	
 def Help():
@@ -71,12 +77,14 @@ def Help():
 	print(" 'help' - to show this text again")
 	print("---------------------------")
 	print("Use these ones for editing settings:")
-	print(" 'noiseScale' - bigger value -> further zoom is")
+	print(" 'noiseScale' - bigger value -> further zoom of the noise is")
+	print(" 'scale' - scale of the output images")
 	print(" 'step' - step in the 3rd demension in noise")
 	print(" 'depth' - when noise will repeat along 3rd demension")
 	print(" 'distance' - distance between lense and image. In other words bigger value = stronger effect")
 	print(" 'octaves' - octaves of noise")
 	print(" 'out_frames' - number of generated frames. They will be saved in 'frames' folder. Leave 0 if you dont want them to save")
+	print(" 'input_file' - path to the input image")
 
 
 print("********")
@@ -108,6 +116,15 @@ while is_app_open:
 			print("Not a float")
 			
 		print("New value is: ", out_step)
+		
+	elif (inp == "scale"):
+		print("Current value is: ", out_scale, " Type new value:")
+		try:
+			out_scale = float(input())
+		except ValueError:
+			print("Not a float")
+			
+		print("New value is: ", out_scale)
 		
 	elif (inp == "depth"):
 		print("Current value is: ", out_depth, " Type new value:")
@@ -144,6 +161,13 @@ while is_app_open:
 			print("Not a int")
 			
 		print("New value is: ", out_out_frames)
+		
+	elif (inp == "input_file"):
+		print("Current value is: ", out_image_path, " Type new value:")
+		
+		out_image_path = input()
+			
+		print("New value is: ", out_image_path)
 		
 	elif (inp == "help"):
 		Help()
